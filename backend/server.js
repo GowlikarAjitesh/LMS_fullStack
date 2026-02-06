@@ -12,12 +12,18 @@ const PORT = process.env.PORT || 3000;
 connectToDB();
 
 //cors
-app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5174",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:5174"];
 
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 //middleware
 app.use(express.json());
 

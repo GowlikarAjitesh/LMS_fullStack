@@ -5,6 +5,9 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home/Home";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
   return (
@@ -17,6 +20,8 @@ function App() {
           <Route index element={<Home/>}></Route>
         </Route>
       </Routes>
+            <ToastContainer position="top-right" autoClose={3000} />
+
     </>
   );
 }

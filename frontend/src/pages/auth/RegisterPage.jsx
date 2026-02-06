@@ -1,14 +1,23 @@
-import React, { useActionState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Link, useFormAction } from "react-router-dom"
-import { registerFormActions } from './auth-actions'
+import React, { useActionState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Link, useNavigate } from "react-router-dom";
+import PasswordInput from "@/components/PasswordInput"; // your reusable component
+import { RegisterSchema } from "@/common/yupSchema"; // your validation schema
+import { registerFormActions } from "./auth-actions"; // your server action
+import axios from "axios";
+import { toast } from "react-toastify";
+
+const BACKEND_URL =  "http://localhost:3000";
 
 export default function RegisterPage() {
-    const[state, formAction, isPending] = useActionState(registerFormActions, {});
-    console.log(JSON.stringify(state));
+  // const [state, formAction, isPending] = useActionState(registerFormActions, {});
+  // console.log("Action State:", state);
+  const Navigate = useNavigate();
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
       <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
@@ -19,51 +28,70 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" action={formAction}>
-            <div className="space-y-2">
-              <Label htmlFor="username">username</Label>
-              <Input
-                id="username"
-                type="text"
-                name="username"
-                placeholder="Enter a Unique username"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-              />
-            </div>
-            <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
-              {isPending? "Registering...": "Register"}
-            </Button>
-          </form>
+          <Formik
+            initialValues={{
+              username: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+            }}
+            validationSchema={RegisterSchema}
+            onSubmit={async (values, { setSubmitting }) => {
+              console.log("Form submitted:", values);
+              setSubmitting(true);
+              const response = await registerFormActions(values);
+              if(response.success){
+                toast.success(response.message || "Registration successful!");
+                Navigate('/auth/login');
+              } else {
+                toast.error(response.message || "Registration failed. Please try again.");
+              }
+              setSubmitting(false);
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form className="space-y-4">
+                {/* Username */}
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Field
+                    as={Input}
+                    id="username"
+                    name="username"
+                    placeholder="Enter a Unique username"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                  />
+                  <ErrorMessage name="username" component="p" className="text-red-400 text-sm" />
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Field
+                    as={Input}
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                  />
+                  <ErrorMessage name="email" component="p" className="text-red-400 text-sm" />
+                </div>
+
+                {/* Password */}
+                <PasswordInput id="password" name="password" label="Password" />
+                <ErrorMessage name="password" component="p" className="text-red-400 text-sm" />
+
+                {/* Confirm Password */}
+                <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm Password" />
+                <ErrorMessage name="confirmPassword" component="p" className="text-red-400 text-sm" />
+
+                <Button type="submit" disabled={isSubmitting} className="w-full bg-indigo-600 hover:bg-indigo-700">
+                  {isSubmitting ? "Registering..." : "Register"}
+                </Button>
+              </Form>
+            )}
+          </Formik>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
           <p className="text-center">
@@ -72,13 +100,116 @@ export default function RegisterPage() {
               Login
             </Link>
           </p>
-          {/* <p className="text-center">
-            <Link to="/auth/forgot-password" className="hover:underline">
-              Forgot password?
-            </Link>
-          </p> */}
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------------------------ useActionState Hook ------------------------------------------
+
+
+
+// import React, { useActionState, useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+// import PasswordInput from "@/components/PasswordInput";
+// import { Label } from "@/components/ui/label";
+// import { Link } from "react-router-dom";
+// import { registerFormActions, validateRegister } from "./auth-actions";
+
+// export default function RegisterPage() {
+//   const [state, formAction, isPending] = useActionState(registerFormActions, {});
+//   const [errors, setErrors] = useState({});
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     const formData = new FormData(e.target);
+//     const validationErrors = validateRegister(formData);
+
+//     if (Object.keys(validationErrors).length > 0) {
+//       setErrors(validationErrors);
+//       return;
+//     }
+//     // If no errors, call server action
+//     formAction(formData);
+//   };
+
+//   return (
+//     <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
+//       <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
+//         <CardHeader>
+//           <CardTitle className="text-2xl font-bold text-center">Create A New Account</CardTitle>
+//           <CardDescription className="text-center text-gray-400">
+//             Register to continue
+//           </CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           <form className="space-y-4" onSubmit={handleSubmit}>
+//             {/* Username */}
+//             <div className="space-y-2">
+//               <Label htmlFor="username">Username</Label>
+//               <Input
+//                 id="username"
+//                 type="text"
+//                 name="username"
+//                 placeholder="Enter a Unique username"
+//                 className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+//               />
+//               {errors.username && <p className="text-red-400 text-sm">{errors.username}</p>}
+//             </div>
+
+//             {/* Email */}
+//             <div className="space-y-2">
+//               <Label htmlFor="email">Email</Label>
+//               <Input
+//                 id="email"
+//                 type="email"
+//                 name="email"
+//                 placeholder="you@example.com"
+//                 className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+//               />
+//               {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+//             </div>
+
+//             {/* Password */}
+//             <PasswordInput id="password" name="password" label="Password" />
+//             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+
+//             {/* Confirm Password */}
+//             <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm Password" />
+//             {errors.confirmPassword && <p className="text-red-400 text-sm">{errors.confirmPassword}</p>}
+
+//             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
+//               {isPending ? "Registering..." : "Register"}
+//             </Button>
+//           </form>
+//         </CardContent>
+//         <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
+//           <p className="text-center">
+//             Already have an account?{" "}
+//             <Link to="/auth/login" className="text-indigo-400 hover:underline">
+//               Login
+//             </Link>
+//           </p>
+//         </CardFooter>
+//       </Card>
+//     </div>
+//   );
+// }
