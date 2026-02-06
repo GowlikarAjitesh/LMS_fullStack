@@ -5,23 +5,22 @@
 
 # To start with the project
 ## step 1
-  ### fork the repository
+  fork the repository
 ## step 2
-  ### clone the repository
+  clone the repository
+  
     ```
-    
-    git clone <url>
-    
+    git clone https://github.com/GowlikarAjitesh/LMS_fullStack
     ```
 ## step 3
-  ### to run the frontend 
+  to run the frontend 
   ```
     cd frontend
     npm install
     npm run dev
   ```
 
-  ### to run the backend
+  to run the backend
   ``` 
     cd backend
     npm install
