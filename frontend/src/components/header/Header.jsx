@@ -72,7 +72,7 @@ export default function Header() {
                   <Link to="/instructor">Instructor Dashboard</Link>
                 </Button>
               ) : (
-                <Button variant="ghost" className="hidden sm:flex text-gray-300 hover:text-white hover:bg-indigo-600 hover:cursor-pointer border-1">
+                <Button variant="ghost" className="hidden sm:flex text-gray-300 hover:text-white hover:bg-indigo-600 hover:cursor-pointer border-2">
                   Teach on LMS
                 </Button>
               )}

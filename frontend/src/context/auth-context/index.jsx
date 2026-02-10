@@ -1,7 +1,17 @@
 // src/context/auth-context.js
 import { createContext, useState, useEffect } from "react";
-
+import { Skeleton } from "@/components/ui/skeleton";
 export const AuthContext = createContext();
+
+export function SkeletonText() {
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-3/4" />
+    </div>
+  )
+}
 
 export default function AuthProvider({ children }) {
   const [isAuth, setIsAuth] = useState(false);
@@ -22,7 +32,9 @@ export default function AuthProvider({ children }) {
   return (
     // Note: Use .Provider unless you are on React 19 (which supports direct Context)
     <AuthContext.Provider value={{ isAuth, setIsAuth, userDetails, setUserDetails, loading }}>
-      {!loading && children} 
+      {
+        loading ? <SkeletonText/> : children
+      }
     </AuthContext.Provider>
   );
 }
