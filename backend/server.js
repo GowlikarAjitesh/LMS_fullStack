@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectToDB = require('./database/db');
 const authRoutes = require('./routes/auth-routes');
-
+const userRoutes = require('./routes/user-routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +23,9 @@ app.use(cors({
     }
   },
   credentials: true,
+  methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+
 }));
 //middleware
 app.use(express.json());
@@ -30,6 +33,7 @@ app.use(express.json());
 
 //routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 //gloabal error handling
 app.use((err, req, res, next) => {

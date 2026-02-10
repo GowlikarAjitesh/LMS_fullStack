@@ -1,6 +1,7 @@
 "use server";
 
 import axios from "axios";
+import axiosInstance from "@/api/axiosInstance";
 const BACKEND_URL =  "http://localhost:3000";
 
 export function validateRegister(formData) {
@@ -42,7 +43,7 @@ export function validateRegister(formData) {
 export async function registerFormActions(userDetails) {
   console.log(userDetails);
   try {
-    const res = await axios.post(`${BACKEND_URL}/api/auth/register`, userDetails);
+    const res = await axiosInstance.post(`/api/auth/register`, userDetails);
     console.log("Response from server:", res);
     return res.data; // success case
   } catch (err) {
@@ -59,7 +60,7 @@ export async function registerFormActions(userDetails) {
 export async function loginFormActions(userDetails) {
   console.log(userDetails);
   try {
-    const res = await axios.post(`${BACKEND_URL}/api/auth/login`, userDetails);
+    const res = await axiosInstance.post(`/api/auth/login`, userDetails);
     console.log("Response from server:", res);
     return res.data; // success case
   } catch (err) {
