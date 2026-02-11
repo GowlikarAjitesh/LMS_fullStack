@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,10 +12,11 @@ import AuthGuard from "@/components/rotueGuard/AuthGuard";
 import GuestGuard from "@/components/rotueGuard/GuestGuard";
 import InstructorGuard from "@/components/rotueGuard/InstructorGuard";
 
-import { AuthContext } from "@/context/auth-context/index";
+import AuthContext from "@/context/auth-context/index";
 
 import Layout from "@/pages/Layout";
 import NotFoundPage from "@/pages/NotFoundPage";
+import InstructorLayoutPage from "./pages/instructor/InstructorLayoutPage";
 
 function App() {
   const auth = useContext(AuthContext);
@@ -34,13 +35,18 @@ function App() {
 
         <Route element={<Layout />}>
         {/* Authenticated users */}
-        <Route element={<AuthGuard isAuth={auth.isAuth} />}>
+        <Route element={<AuthGuard isAuth={auth.isAuth} user={auth.userDetails} />}>
+          
           <Route path="/" element={<Home />} />
-
           {/* Instructor only */}
-          <Route element={<InstructorGuard user={auth.userDetails} />}>
-            <Route path="/instructor" element={<h1>Instructor Dashboard</h1>} />
+          <Route element={<InstructorGuard isAuth={auth.isAuth} user={auth.userDetails} />}>
+            <Route path="/" element={<Navigate to="/instructor" replace />}/>
+            <Route path="/instructor" element={<InstructorLayoutPage/>}>
+            
+            </Route>
           </Route>
+
+          
         </Route>
 
 

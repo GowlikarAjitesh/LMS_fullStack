@@ -1,38 +1,46 @@
-// src/context/auth-context.js
-import { createContext, useState, useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-export const AuthContext = createContext();
+// auth-context.jsx
+import { createContext, useEffect, useState } from "react";
+import axiosInstance from "@/api/axiosInstance";
 
-export function SkeletonText() {
-  return (
-    <div className="flex w-full max-w-screen max-h-screen items-center m-auto  gap-2">
-      Loading...
-    </div>
-  )
-}
+const AuthContext = createContext(null);
+export default AuthContext;
 
-export default function AuthProvider({ children }) {
+export function AuthProvider({ children }) {
   const [isAuth, setIsAuth] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("Bearer");
-    const savedUser = localStorage.getItem("userDetails");
-    
-    if (token && savedUser) {
-      setIsAuth(true);
-      setUserDetails(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) throw new Error();
+
+        const res = await axiosInstance.get("/api/auth/check-auth");
+        const userData = res.data.data;
+        const userDetails = localStorage.getItem("userDetails");
+        if(!userDetails){
+          localStorage.setItem("userDetails", JSON.stringify(userData));
+        }
+        setIsAuth(true);
+        setUserDetails(res.data.data);
+      } catch {
+        setIsAuth(false);
+        setUserDetails(null);
+        localStorage.clear();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return (
-    // Note: Use .Provider unless you are on React 19 (which supports direct Context)
-    <AuthContext.Provider value={{ isAuth, setIsAuth, userDetails, setUserDetails, loading }}>
-      {
-        loading ? <SkeletonText/> : children
-      }
+    <AuthContext.Provider
+      value={{ isAuth, userDetails, setIsAuth, setUserDetails, loading }}
+    >
+      {loading ? <div>Loading...</div> : children}
     </AuthContext.Provider>
   );
 }

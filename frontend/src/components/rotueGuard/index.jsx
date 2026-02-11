@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import {Navigate, Route, useLocation} from 'react-router-dom';
+import {Navigate, Route, useLocation, Outlet} from 'react-router-dom';
 
 function RouteGuard({authenticated, user, element}){
     const location = useLocation();
@@ -13,7 +13,7 @@ function RouteGuard({authenticated, user, element}){
     if(authenticated && user?.role === 'instructor' && (!location.pathname.includes('/instructor') || location.pathname.includes('/auth'))){
         return <Navigate to='/instructor'/>
     }
-    return <Fragment>{element}</Fragment>
+    return <Outlet />;
 } 
 
 export default RouteGuard;

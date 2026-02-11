@@ -9,11 +9,13 @@ const axiosInstance = axios.create(
 );
 
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("Bearer");
+    const token = localStorage.getItem("accessToken");
     if(token){
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-});
+},
+(err) => Promise.reject(err)
+);
 
 export default axiosInstance;

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import PasswordInput from "@/components/PasswordInput";
-import { AuthContext } from "@/context/auth-context";
+import AuthContext from "@/context/auth-context";
 export default function LoginPage() {
 
   const {setIsAuth, setUserDetails} = useContext(AuthContext);
@@ -26,14 +26,13 @@ export default function LoginPage() {
   const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    console.log("Form submitted:", values);
     setSubmitting(true);
     const response = await loginFormActions(values);
     
     if (response.success) {
       toast.success(response.message || "Login successful!");
 
-      localStorage.setItem("Bearer", response.token);
+      localStorage.setItem("accessToken", response.token);
       localStorage.setItem("userDetails", JSON.stringify(response.data));
 
       setIsAuth(true);
