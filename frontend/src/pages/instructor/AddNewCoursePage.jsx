@@ -18,9 +18,9 @@ export default function AddNewCoursePage() {
           <div className='container mx-auto p-4'>
             <Tabs defaultValue="Curriculum" className='space-y-4'>
               <TabsList>
-                <TabsTrigger value="curriculum"><LucideBookText/>curriculum</TabsTrigger>
-                <TabsTrigger value="course-landing-page"><AppWindowIcon/>preview</TabsTrigger>
-                <TabsTrigger value="settings"><Settings/>settings</TabsTrigger>
+                <TabsTrigger value="curriculum"><LucideBookText/>Curriculum</TabsTrigger>
+                <TabsTrigger value="course-landing-page"><AppWindowIcon/>Course Landing</TabsTrigger>
+                <TabsTrigger value="settings"><Settings/>Settings</TabsTrigger>
               </TabsList>
               <TabsContent value="curriculum">
                 <CourseCurriculum/>

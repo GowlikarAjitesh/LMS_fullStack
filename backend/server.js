@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectToDB = require('./database/db');
 const authRoutes = require('./routes/auth-routes');
 const userRoutes = require('./routes/user-routes');
+const instructorRoutes = require('./routes/instructor-routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use(express.json());
 //routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/instructor/media', instructorRoutes);
 
 //gloabal error handling
 app.use((err, req, res, next) => {
