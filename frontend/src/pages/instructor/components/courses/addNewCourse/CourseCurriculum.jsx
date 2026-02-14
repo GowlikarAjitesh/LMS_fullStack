@@ -1,21 +1,13 @@
+import React, { useContext, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardAction,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { courseCuriculumInitialFormData } from "@/config";
+import { Plus, Trash2, RefreshCw } from "lucide-react";
+import { mediaUploadService, mediaDeleteService } from "@/service/index";
 import InstructorContext from "@/context/instructorContext";
-import { FileInputIcon, Plus, Trash2 } from "lucide-react";
-import React, { useContext, useState } from "react";
-import { file } from "zod";
-import { mediaUploadService } from "@/service/index";
-import { div } from "framer-motion/client";
+import { courseCuriculumInitialFormData } from "@/config";
 import MediaProgressBar from "@/components/mediaProgressLoader/MediaProgressBar";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
 
@@ -29,29 +21,74 @@ export default function CourseCurriculum() {
     setCourseMediaProgressPercentage,
   } = useContext(InstructorContext);
 
+  // Hidden input for the Replace functionality
+  const replaceInputRef = useRef(null);
+  const [currentReplaceIndex, setCurrentReplaceIndex] = useState(null);
+
   function handleAddNewLecture() {
     setCourseCurriculumFormData([
       ...courseCurriculumFormData,
       { ...courseCuriculumInitialFormData },
     ]);
   }
+
   function handleInputChange(event, index) {
     let updateCurriculum = [...courseCurriculumFormData];
     updateCurriculum[index].title = event.target.value;
     setCourseCurriculumFormData(updateCurriculum);
-    console.log(courseCurriculumFormData);
-  }
-  function handleToggleFreePreview(event, index) {
-    console.log(event);
-    let updateCurriculum = [...courseCurriculumFormData];
-    updateCurriculum[index].freePreview = event;
-    setCourseCurriculumFormData(updateCurriculum);
-    console.log("Free preview = ", updateCurriculum[index].freePreview);
   }
 
+  function handleToggleFreePreview(value, index) {
+    let updateCurriculum = [...courseCurriculumFormData];
+    updateCurriculum[index].freePreview = value;
+    setCourseCurriculumFormData(updateCurriculum);
+  }
+
+  // --- REPLACING LOGIC ---
+  function handleReplaceClick(index) {
+    setCurrentReplaceIndex(index);
+    if (replaceInputRef.current) {
+      replaceInputRef.current.click();
+    }
+  }
+
+  async function handleVideoReplace(event) {
+    const selectedFile = event.target.files[0];
+    const index = currentReplaceIndex;
+
+    if (selectedFile && index !== null) {
+      const oldPublicId = courseCurriculumFormData[index].public_id;
+      const videoFormData = new FormData();
+      // Appending publicId tells the backend to overwrite
+      videoFormData.append("publicId", oldPublicId);
+      videoFormData.append("file", selectedFile);
+
+      try {
+        setCourseMediaProgress(true);
+        const result = await mediaUploadService(
+          videoFormData,
+          setCourseMediaProgressPercentage
+        );
+
+        if (result.success) {
+          let updateCurriculum = [...courseCurriculumFormData];
+          updateCurriculum[index].videoUrl = result.data.url;
+          updateCurriculum[index].public_id = result.data.public_id;
+          setCourseCurriculumFormData(updateCurriculum);
+        }
+      } catch (error) {
+        console.error("Replace failed", error);
+      } finally {
+        setCourseMediaProgress(false);
+        setCurrentReplaceIndex(null);
+        event.target.value = ""; // Clear for future changes
+      }
+    }
+  }
+
+  // --- NEW UPLOAD LOGIC ---
   async function handleVideoUploadChange(event, index) {
     const selectedFile = event.target.files[0];
-    console.log("This is selected video file = ", selectedFile);
     if (selectedFile) {
       const videoFormData = new FormData();
       videoFormData.append("file", selectedFile);
@@ -59,24 +96,47 @@ export default function CourseCurriculum() {
         setCourseMediaProgress(true);
         const result = await mediaUploadService(
           videoFormData,
-          setCourseMediaProgressPercentage,
+          setCourseMediaProgressPercentage
         );
-        console.log(result.data);
         if (result.success) {
-          console.log("Media uploaded successsfully...");
           let updateCurriculum = [...courseCurriculumFormData];
           updateCurriculum[index].public_id = result?.data?.public_id;
-          updateCurriculum[index].videoUrl = result?.data?.playback_url;
-          // updateCurriculum[index].videoUrl = result?.data?.url.replace('/upload/', '/upload/f_auto,q_auto/');
+          updateCurriculum[index].videoUrl = result?.data?.url;
           setCourseCurriculumFormData(updateCurriculum);
         }
       } catch (error) {
+        console.error("Upload failed", error);
       } finally {
         setCourseMediaProgress(false);
       }
     }
-    console.log(courseCurriculumFormData);
-    // console.log
+  }
+
+  // --- DELETE LOGIC ---
+  async function handleDeleteVideo(index) {
+    const publicId = courseCurriculumFormData[index].public_id;
+    if (publicId) {
+      try {
+        setCourseMediaProgress(true);
+        const result = await mediaDeleteService(publicId);
+        if (result?.success) {
+          let updated = [...courseCurriculumFormData];
+          updated[index].videoUrl = "";
+          updated[index].public_id = "";
+          setCourseCurriculumFormData(updated);
+        }
+      } catch (error) {
+        console.error("Delete failed", error);
+      } finally {
+        setCourseMediaProgress(false);
+      }
+    }
+  }
+
+  function isCourseCurriculumFormDataValid() {
+    return courseCurriculumFormData.every((item) => {
+      return item && item.title?.trim() !== "" && item.videoUrl?.trim() !== "";
+    });
   }
 
   return (
@@ -85,70 +145,72 @@ export default function CourseCurriculum() {
         <CardTitle>Create Course Curriculum</CardTitle>
       </CardHeader>
 
+      {/* Hidden input used for Replace function */}
+      <input
+        type="file"
+        ref={replaceInputRef}
+        className="hidden"
+        accept="video/*"
+        onChange={handleVideoReplace}
+      />
+
       <CardContent>
-        <Button onClick={handleAddNewLecture}>
-          {" "}
-          <Plus /> Add Lecture
+        <Button
+          onClick={handleAddNewLecture}
+          disabled={!isCourseCurriculumFormDataValid() || courseMediaProgress}
+        >
+          <Plus className="mr-2" /> Add Lecture
         </Button>
 
-        {courseMediaProgress ? (
-          <div className="p-4">
+        {courseMediaProgress && (
+          <div className="mt-4">
             <MediaProgressBar
               isMediaUploading={courseMediaProgress}
               progress={courseMediaProgressPercentage}
             />
           </div>
-        ) : null}
+        )}
+
         <div className="mt-4 space-y-4">
           {courseCurriculumFormData.map((courseCuriculum, index) => (
             <div className="border p-5 rounded-md" key={index}>
               <div className="flex gap-5 items-center mb-4">
                 <h3 className="font-semibold">Lecture {index + 1}</h3>
-
                 <Input
                   placeholder="Enter Lecture title"
                   className="max-w-96"
                   value={courseCuriculum.title || ""}
                   onChange={(event) => handleInputChange(event, index)}
                 />
-
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={courseCuriculum.freePreview ?? false}
-                    onCheckedChange={(value) =>
-                      handleToggleFreePreview(value, index)
-                    }
+                    onCheckedChange={(value) => handleToggleFreePreview(value, index)}
                   />
                   <Label>Free Preview</Label>
                 </div>
               </div>
 
-              {/* VIDEO SECTION */}
               <div className="mt-4">
                 {courseCuriculum.videoUrl ? (
                   <div className="flex flex-col gap-3">
-                    {/* <video
-                      key={courseCuriculum.videoUrl}
-                      width="450"
-                      height="200"
-                      controls
-                      src={courseCuriculum.videoUrl}
-                    /> */}
-                    <VideoPlayer 
-                    url={courseCuriculum.videoUrl} width="450px" height="200px"
-                    />
+                    <div className="max-w-2xl">
+                      <VideoPlayer url={courseCuriculum.videoUrl} />
+                    </div>
                     <div className="flex gap-3">
-                      <Button>Replace</Button>
                       <Button
-                        className="bg-red-700"
-                        onClick={() => {
-                          let updated = [...courseCurriculumFormData];
-                          updated[index].videoUrl = "";
-                          updated[index].public_id = "";
-                          setCourseCurriculumFormData(updated);
-                        }}
+                        variant="outline"
+                        onClick={() => handleReplaceClick(index)}
+                        className="flex items-center gap-2"
                       >
-                        <Trash2 /> Delete
+                        <RefreshCw className="h-4 w-4" /> Replace
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="flex items-center gap-2 bg-red-700"
+                        onClick={() => handleDeleteVideo(index)}
+                      >
+                        <Trash2 className="h-4 w-4" /> Delete
                       </Button>
                     </div>
                   </div>

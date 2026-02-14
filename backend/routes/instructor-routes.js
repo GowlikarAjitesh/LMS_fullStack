@@ -14,14 +14,15 @@ const upload = multer({ dest: "uploads/" });
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     console.log("req.file:", req.file);
-
+    const { publicId } = req.body;
+    console.log("from upload/ replace  instructor-route = ", publicId);
     if (!req.file) {
       return res.status(400).json({
         success: false,
         message: "No file received",
       });
     }
-    const result = await uploadMediaToCloudinary(req.file.path);
+    const result = await uploadMediaToCloudinary(req.file.path, publicId);
     if (!result) {
       return res.status(400).json({
         success: false,
@@ -44,6 +45,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("from delete instructor - routes = ", id);
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -51,6 +53,7 @@ router.delete("/delete/:id", async (req, res) => {
       });
     }
     const result = await deleteMediaFromCloudinary(id);
+    console.log(result);
     if (!result) {
       return res.status(400).json({
         success: false,
