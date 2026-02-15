@@ -106,7 +106,7 @@ export const courseLandingInitialFormData = {
   primaryLanguage: "",
   subtitle: "",
   description: "",
-  pricing: "",
+  pricing: 0,
   objectives: "",
   welcomeMessage: "",
   image: "",

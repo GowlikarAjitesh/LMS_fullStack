@@ -1,19 +1,14 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import {
   Dialog,
@@ -23,13 +18,37 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Form, Link, useNavigate } from "react-router-dom";
+import InstructorContext from "@/context/instructorContext";
+import { getAllCoursesService } from "@/service";
+import { toast } from "react-toastify";
+
+
+export function EmptyRow({ message = "No Data found", colSpan = 4 }) {
+  return (
+    <TableRow>
+      <TableCell colSpan={colSpan} className="text-center text-muted-foreground">
+        {message}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 
 export default function InstructorCourses() {
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([
-    { id: 1, title: "Java Programming", students: 10, revenue: 1000 },
-    { id: 2, title: "React Mastery", students: 25, revenue: 3500 },
-  ]);
+  const { instructorCoursesList, setInstructorCoursesList } =
+    useContext(InstructorContext);
+  async function fetchAllCourses() {
+    const coursesList = await getAllCoursesService();
+    if (coursesList?.success) {
+      setInstructorCoursesList(coursesList.data);
+    } else {
+      toast.error(coursesList.message);
+    }
+  }
+  useEffect(() => {
+    fetchAllCourses();
+  }, []);
 
   const [open, setOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
@@ -38,12 +57,6 @@ export default function InstructorCourses() {
     students: "",
     revenue: "",
   });
-
-  const handleOpenAdd = () => {
-    setEditingCourse(null);
-    setFormData({ title: "", students: "", revenue: "" });
-    setOpen(true);
-  };
 
   const handleEdit = (course) => {
     setEditingCourse(course);
@@ -64,8 +77,8 @@ export default function InstructorCourses() {
       // Update
       setCourses(
         courses.map((course) =>
-          course.id === editingCourse.id ? { ...formData } : course
-        )
+          course.id === editingCourse.id ? { ...formData } : course,
+        ),
       );
     } else {
       // Add
@@ -79,113 +92,117 @@ export default function InstructorCourses() {
     setOpen(false);
   };
 
-  function handleAddNewCourse(){
-    navigate('/instructor/newCourse')
+  function handleAddNewCourse() {
+    navigate("/instructor/newCourse");
   }
 
   return (
     <div className="flex flex-col gap-2">
-    <Card>
-      <CardHeader className="flex justify-between flex-row items-center">
-        <CardTitle className="text-3xl font-extrabold">
-          All Courses
-        </CardTitle>
-        <Button onClick={handleAddNewCourse}>
-          <Plus className="h-4 w-4" />
-          Add New
+      <Card>
+        <CardHeader className="flex justify-between flex-row items-center">
+          <CardTitle className="text-3xl font-extrabold">All Courses</CardTitle>
+          <Button onClick={handleAddNewCourse}>
+            <Plus className="h-4 w-4" />
+            Add New
           </Button>
-      </CardHeader>
-</Card>
-<Card>
-      <CardContent className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Course Name</TableHead>
-              <TableHead>Students</TableHead>
-              <TableHead>Revenue</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {courses.map((course) => (
-              <TableRow key={course.id}>
-                <TableCell className="font-medium">
-                  {course.title}
-                </TableCell>
-                <TableCell>{course.students}</TableCell>
-                <TableCell>${course.revenue}</TableCell>
-
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(course)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500"
-                      onClick={() => handleDelete(course.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+        </CardHeader>
+      </Card>
+      <Card>
+        <CardContent className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Course Name</TableHead>
+                <TableHead>Students</TableHead>
+                <TableHead>Revenue</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
+            </TableHeader>
 
-      {/* Add / Edit Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingCourse ? "Edit Course" : "Add Course"}
-            </DialogTitle>
-          </DialogHeader>
+            <TableBody>
+              {instructorCoursesList?.length === 0 ? (
+                <EmptyRow />
+              ) : (
+                instructorCoursesList.map((course, index) => (
+                  <TableRow key={course._id}>
+                    <TableCell className="font-medium">
+                      {course.title}
+                    </TableCell>
+                    <TableCell>{course.students?.length}</TableCell>
+                    <TableCell>
+                      ${(course.students?.length || 0) * Number(course.pricing)}
+                    </TableCell>
 
-          <div className="space-y-4 mt-4">
-            <Input
-              placeholder="Course Title"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-            />
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(course)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
 
-            <Input
-              type="number"
-              placeholder="Students"
-              value={formData.students}
-              onChange={(e) =>
-                setFormData({ ...formData, students: e.target.value })
-              }
-            />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500"
+                          onClick={() => handleDelete(course.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
 
-            <Input
-              type="number"
-              placeholder="Revenue"
-              value={formData.revenue}
-              onChange={(e) =>
-                setFormData({ ...formData, revenue: e.target.value })
-              }
-            />
+        {/* Add / Edit Dialog */}
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingCourse ? "Edit Course" : "Add Course"}
+              </DialogTitle>
+            </DialogHeader>
 
-            <Button className="w-full" onClick={handleSubmit}>
-              {editingCourse ? "Update Course" : "Add Course"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </Card>
+            <div className="space-y-4 mt-4">
+              <Input
+                placeholder="Course Title"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
+
+              <Input
+                type="number"
+                placeholder="Students"
+                value={formData.students}
+                onChange={(e) =>
+                  setFormData({ ...formData, students: e.target.value })
+                }
+              />
+
+              <Input
+                type="number"
+                placeholder="Revenue"
+                value={formData.revenue}
+                onChange={(e) =>
+                  setFormData({ ...formData, revenue: e.target.value })
+                }
+              />
+
+              <Button className="w-full" onClick={handleSubmit}>
+                {editingCourse ? "Update Course" : "Add Course"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Card>
     </div>
   );
 }

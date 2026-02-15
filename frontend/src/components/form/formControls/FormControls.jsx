@@ -32,7 +32,7 @@ export default function FormControls({
             onChange={(event) =>
               setFormData({
                 ...formData,
-                [controlItem.name]: event.target.value,
+                [controlItem.name]: controlItem.type == "number" ? Number(event.target.value) : event.target.value,
               })
             }
           />

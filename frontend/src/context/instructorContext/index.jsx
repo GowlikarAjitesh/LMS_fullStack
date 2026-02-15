@@ -8,11 +8,12 @@ export function InstructorProvider({ children }) {
   const [courseLandingFormData, setCourseLandingFormData] =
     useState(courseLandingInitialFormData);
   const [courseCurriculumFormData, setCourseCurriculumFormData] = useState(courseCuriculumInitialFormData);
+  const [instructorCoursesList, setInstructorCoursesList] = useState([]);
   const [courseMediaProgress, setCourseMediaProgress] = useState(false);
   const [courseMediaProgressPercentage, setCourseMediaProgressPercentage] = useState(0);
   return (
     <InstructorContext.Provider
-      value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculumFormData, setCourseCurriculumFormData, courseMediaProgress, setCourseMediaProgress,courseMediaProgressPercentage, setCourseMediaProgressPercentage }}
+      value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculumFormData, setCourseCurriculumFormData, instructorCoursesList, setInstructorCoursesList, courseMediaProgress, setCourseMediaProgress,courseMediaProgressPercentage, setCourseMediaProgressPercentage }}
     >
       {children}
     </InstructorContext.Provider>
