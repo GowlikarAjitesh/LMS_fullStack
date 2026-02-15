@@ -39,13 +39,11 @@ const uploadMediaToCloudinary = async (filePath, existingPublicId = null) => {
 
 const deleteMediaFromCloudinary = async (publicId) => {
   try {
-    // Attempt deletion in both buckets
     const [videoResult, imageResult] = await Promise.all([
       cloudinary.uploader.destroy(publicId, { resource_type: "video" }),
       cloudinary.uploader.destroy(publicId, { resource_type: "image" })
     ]);
 
-    // If either one returned 'ok', the deletion was successful
     if (videoResult.result === 'ok' || imageResult.result === 'ok') {
       return { result: 'ok' };
     }
