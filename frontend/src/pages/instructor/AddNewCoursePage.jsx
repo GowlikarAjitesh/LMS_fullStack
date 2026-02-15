@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AppWindowIcon, LucideBookText, Settings } from "lucide-react";
 import CourseCurriculum from "./components/courses/addNewCourse/CourseCurriculum";
@@ -61,14 +61,14 @@ export default function AddNewCoursePage() {
   async function handleFormSubmit() {
     const formData = {
       instructor: {
-  instructorId: userDetails?.id,
-  instructorName: userDetails?.username,
-  instructorEmail: userDetails?.email
-},
+        instructorId: userDetails?.id,
+        instructorName: userDetails?.username,
+        instructorEmail: userDetails?.email,
+      },
       ...courseLandingFormData,
-  pricing: Number(courseLandingFormData.pricing),
+      pricing: Number(courseLandingFormData.pricing),
       students: [],
-  curriculum: courseCurriculumFormData,
+      curriculum: courseCurriculumFormData,
       isPublished: true,
     };
     console.log(JSON.stringify(formData, null, 2));
@@ -85,18 +85,20 @@ export default function AddNewCoursePage() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-white">
-      <div className="flex justify-between rounded-2xl items-center mb-5">
-        <h1 className="text-3xl font-extrabold mb-5">Create a New Course</h1>
-        <Button
-          disabled={!validateFormData()}
-          onClick={handleFormSubmit}
-          className="text-sm tracking-wider font-bold px-8"
-        >
-          Submit
-        </Button>
-      </div>
+    <div className="container mx-auto p-4">
       <Card>
+        <CardHeader className="flex justify-between rounded-2xl items-center mb-5">
+          <CardTitle className="text-3xl font-extrabold mb-5">
+            Create a New Course
+          </CardTitle>
+          <Button
+            disabled={!validateFormData()}
+            onClick={handleFormSubmit}
+            className="text-sm tracking-wider font-bold px-8"
+          >
+            Submit
+          </Button>
+        </CardHeader>
         <CardContent>
           <div className="container mx-auto p-4">
             <Tabs defaultValue="Curriculum" className="space-y-4">
