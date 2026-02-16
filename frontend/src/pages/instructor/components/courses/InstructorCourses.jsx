@@ -10,13 +10,6 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Form, Link, useNavigate } from "react-router-dom";
 import InstructorContext from "@/context/instructorContext";
 import { getAllCoursesService } from "@/service";
@@ -36,7 +29,7 @@ export function EmptyRow({ message = "No Data found", colSpan = 4 }) {
 
 export default function InstructorCourses() {
   const navigate = useNavigate();
-  const { instructorCoursesList, setInstructorCoursesList } =
+  const { instructorCoursesList, setInstructorCoursesList, editSingleCourseData, setEditSingleCourseData } =
     useContext(InstructorContext);
   async function fetchAllCourses() {
     const coursesList = await getAllCoursesService();
@@ -59,40 +52,19 @@ export default function InstructorCourses() {
   });
 
   const handleEdit = (course) => {
-    setEditingCourse(course);
-    setFormData(course);
-    setOpen(true);
+    console.log("edit course data = ", course);
+    navigate(`/instructor/editCourse/${course._id}`);
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
-      setCourses(courses.filter((course) => course.id !== id));
+      // setCourses(courses.filter((course) => course.id !== id));
+      console.log("Delete function need to be implemented...")
     }
-  };
-
-  const handleSubmit = () => {
-    if (!formData.title) return;
-
-    if (editingCourse) {
-      // Update
-      setCourses(
-        courses.map((course) =>
-          course.id === editingCourse.id ? { ...formData } : course,
-        ),
-      );
-    } else {
-      // Add
-      const newCourse = {
-        ...formData,
-        id: Date.now(),
-      };
-      setCourses([...courses, newCourse]);
-    }
-
-    setOpen(false);
   };
 
   function handleAddNewCourse() {
+    setEditSingleCourseData(null);
     navigate("/instructor/newCourse");
   }
 
@@ -159,49 +131,6 @@ export default function InstructorCourses() {
             </TableBody>
           </Table>
         </CardContent>
-
-        {/* Add / Edit Dialog */}
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingCourse ? "Edit Course" : "Add Course"}
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4 mt-4">
-              <Input
-                placeholder="Course Title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-              />
-
-              <Input
-                type="number"
-                placeholder="Students"
-                value={formData.students}
-                onChange={(e) =>
-                  setFormData({ ...formData, students: e.target.value })
-                }
-              />
-
-              <Input
-                type="number"
-                placeholder="Revenue"
-                value={formData.revenue}
-                onChange={(e) =>
-                  setFormData({ ...formData, revenue: e.target.value })
-                }
-              />
-
-              <Button className="w-full" onClick={handleSubmit}>
-                {editingCourse ? "Update Course" : "Add Course"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </Card>
     </div>
   );

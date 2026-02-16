@@ -17,7 +17,7 @@ export default function CommonForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* Render all the form controls here */}
       <FormControls formControls={formControls} formData={formData} setFormData={setFormData} className="mb-5"/>
-      <Button>{buttonText || "Submit"}</Button>
+      {/* <Button>{buttonText || "Submit"}</Button> */}
     </form>
   );
 }
