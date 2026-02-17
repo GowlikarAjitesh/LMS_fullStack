@@ -4,8 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, RefreshCw } from "lucide-react";
-import { mediaUploadService, mediaDeleteService } from "@/service/index";
+import { Plus, Trash2, RefreshCw, Upload, UploadIcon } from "lucide-react";
+import { mediaUploadService, mediaDeleteService, mediaBulkUploadService } from "@/service/index";
 import InstructorContext from "@/context/instructorContext";
 import { courseCuriculumInitialFormData } from "@/config";
 import MediaProgressBar from "@/components/mediaProgressLoader/MediaProgressBar";
@@ -23,6 +23,7 @@ export default function CourseCurriculum() {
 
   // Hidden input for the Replace functionality
   const replaceInputRef = useRef(null);
+  const bulkUploadInputRef = useRef(null);
   const [currentReplaceIndex, setCurrentReplaceIndex] = useState(null);
 
   function handleAddNewLecture() {
@@ -48,7 +49,7 @@ export default function CourseCurriculum() {
   function handleReplaceClick(index) {
     setCurrentReplaceIndex(index);
     if (replaceInputRef.current) {
-      replaceInputRef.current.click();
+      replaceInputRef.current?.click();
     }
   }
 
@@ -139,10 +140,85 @@ export default function CourseCurriculum() {
     });
   }
 
+    function areAllFieldsOfCourseCuriculumFormDataEmpty(arr) {
+      return arr.every((obj)=>{
+        return Object.entries(obj).every(([key, value]) => {
+          if(typeof value === 'boolean') {
+            return true;
+          }
+          return value == "";
+        })
+      })
+  }
+
+
+async function handleBulkUploadInputChange(event) {
+  const files = event.target.files;
+  if (!files?.length) return;
+
+  const formData = new FormData();
+  Array.from(files).forEach(file => {
+    console.log("Bulk upload file:", file);
+    formData.append("files", file);
+  });
+
+  try {
+    setCourseMediaProgress(true);
+
+    const response = await mediaBulkUploadService(
+      formData,
+      setCourseMediaProgressPercentage
+    );
+
+    if (!response?.success) return;
+
+    setCourseCurriculumFormData(prevData => {
+
+      const baseData = areAllFieldsOfCourseCuriculumFormDataEmpty(prevData)
+        ? []
+        : [...prevData];
+
+      const newLectures = response.data.map((file, index) => ({
+        title: `Lecture ${baseData.length + index + 1}`,
+        videoUrl: file.url,
+        freePreview: false,
+        public_id: file.public_id,
+      }));
+
+      return [...baseData, ...newLectures];
+    });
+
+  } catch (error) {
+    console.error("Bulk Upload Error:", error);
+  } finally {
+    setCourseMediaProgress(false);
+    event.target.value = "";
+  }
+}
+
+  function handleBulkUploadButtonClick(){
+    bulkUploadInputRef.current?.click();
+  }
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex justify-between">
         <CardTitle>Create Course Curriculum</CardTitle>
+        <div>
+          
+      <input
+        type="file"
+        ref={bulkUploadInputRef}
+        className="hidden"
+        multiple
+        accept="video/*"
+        id="bulk-media-upload"
+        onChange={handleBulkUploadInputChange}
+        // onChange={()=>handleBulkUploadButtonClick()}
+      />
+
+          <Button variant="outline" className="cursor-pointer" onClick={()=>handleBulkUploadButtonClick()}><Upload className="w-4 h-4 mr-2"/> Bulk Upload</Button>
+        </div>
       </CardHeader>
 
       {/* Hidden input used for Replace function */}

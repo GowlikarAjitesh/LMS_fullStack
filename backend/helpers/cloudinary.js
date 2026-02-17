@@ -9,23 +9,20 @@ cloudinary.config({
 const uploadMediaToCloudinary = async (filePath, existingPublicId = null) => {
   try {
     const options = {
-      resource_type: "auto", // Automatically detects image vs video
-      // If public_id is provided, Cloudinary swaps the file at that ID
+      resource_type: "auto",
       public_id: existingPublicId || undefined, 
       overwrite: !!existingPublicId,
-      invalidate: true, // Clears the CDN cache for this specific public_id
+      invalidate: true,
     };
 
     const result = await cloudinary.uploader.upload(filePath, options);
 
-    // Generate the optimized URL
-    // We include 'version' to bypass browser-side caching
     const url = cloudinary.url(result.public_id, {
       resource_type: result.resource_type,
       transformation: [
         { fetch_format: "auto", quality: "auto" }
       ],
-      version: result.version, // Adding the version timestamp is key for "Replace"
+      version: result.version,
       secure: true
     });
 

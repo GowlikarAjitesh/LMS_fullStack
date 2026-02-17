@@ -9,7 +9,7 @@ export async function mediaUploadService(formData, onProgressCallback) {
       onProgressCallback(percentCompleted);
     },
   });
-  console.log("Media service = ", data);
+  console.log("Media upload service = ", data);
   return data;
 }
 
@@ -39,5 +39,18 @@ export async function getSingleCourseService(id){
 export async function updateCourseService(id, formData){
   
   const {data} = await axiosInstance.put(`/api/instructor/course/update/${id}`, formData);
+  return data;
+}
+
+export async function mediaBulkUploadService(formData, onProgressCallback) {
+  const { data } = await axiosInstance.post("/api/instructor/media/bulk-upload", formData, {
+    onUploadProgress: (progressEvent) => {
+      const percentCompleted = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total
+      );
+      onProgressCallback(percentCompleted);
+    },
+  });
+  console.log("Media service = ", data);
   return data;
 }
