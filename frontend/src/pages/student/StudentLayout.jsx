@@ -1,26 +1,15 @@
-import axiosInstance from '@/api/axiosInstance';
-import React, { useEffect, useState } from 'react'
+import HeroSection from "@/pages/student/components/HeroSection";
+import FeaturedCourses from "@/pages/student/components/FeaturedCourse";
+import InstructorSection from "@/pages/student/components/InstructorSection";
+import CTASection from "@/pages/student/components/CTASection";
 
 export default function Home() {
-  const [details, setDetails] = useState({});
-  console.log('Token = ', localStorage.getItem('Bearer'));
-
-  useEffect(()=>{
-      axiosInstance.get('/api/user').then((res)=> {
-    console.log(res.data.data);
-    setDetails(res.data.data);
-  }).catch((err)=> {
-    console.log("Error ", err);
-  });
-  console.log(details);
-  }, []);
-
   return (
-    <div>
-      This is Home Page
-      {
-        JSON.stringify(details)
-      }
-    </div>
-  )
+    <>
+      <HeroSection />
+      <FeaturedCourses />
+      <InstructorSection />
+      <CTASection />
+    </>
+  );
 }
