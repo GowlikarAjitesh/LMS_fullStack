@@ -7,11 +7,11 @@ import { Link } from "react-router-dom"
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
-      <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background">
+      <Card className="w-100 shadow-xl border border-border bg-card text-foreground">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
-          <CardDescription className="text-center text-gray-400">
+          <CardDescription className="text-center text-muted-foreground">
             Enter your email to receive reset instructions
           </CardDescription>
         </CardHeader>
@@ -23,24 +23,24 @@ export default function ForgotPasswordPage() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                className="bg-input border-border text-foreground placeholder-muted-foreground"
               />
             </div>
-            <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
               Send Reset Link
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
+        <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <p className="text-center">
             Remembered your password?{" "}
-            <Link to="/auth/login" className="text-indigo-400 hover:underline">
+            <Link to="/auth/login" className="text-primary hover:underline">
               Login
             </Link>
           </p>
           <p className="text-center">
             Don’t have an account?{" "}
-            <Link to="/auth/register" className="text-indigo-400 hover:underline">
+            <Link to="/auth/register" className="text-primary hover:underline">
               Register
             </Link>
           </p>

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
-    <section className="bg-linear-to-r from-indigo-600 to-purple-600 text-white py-20 h-full">
+    <section className="bg-primary text-primary-foreground py-20 h-screen">
       <div className="container mx-auto px-6 grid md:grid-cols-2 items-center gap-10">
         
         <div>
@@ -10,11 +10,11 @@ export default function HeroSection() {
             Learn Without Limits
           </h1>
 
-          <p className="mt-4 text-lg text-gray-200">
+          <p className="mt-4 text-lg text-primary-foreground/90">
             Build skills with online courses from world-class instructors.
           </p>
 
-          <Button className="mt-6 bg-white text-black hover:bg-gray-200">
+          <Button className="mt-6 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
             Explore Courses
           </Button>
         </div>

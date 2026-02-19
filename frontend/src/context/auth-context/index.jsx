@@ -1,6 +1,7 @@
 // auth-context.jsx
 import { createContext, useEffect, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
+import { Toaster } from "sonner";
 
 const AuthContext = createContext(null);
 export default AuthContext;
@@ -40,7 +41,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{ isAuth, userDetails, setIsAuth, setUserDetails, loading }}
     >
-      {loading ? <div>Loading...</div> : children}
+      {loading ? <Toaster/> : children}
     </AuthContext.Provider>
   );
 }

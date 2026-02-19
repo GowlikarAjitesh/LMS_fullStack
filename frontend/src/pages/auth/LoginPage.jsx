@@ -23,7 +23,7 @@ export default function LoginPage() {
   const {setIsAuth, setUserDetails} = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname;
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
@@ -38,7 +38,13 @@ export default function LoginPage() {
       setIsAuth(true);
       setUserDetails(response.data);
 
-      navigate(from, { replace: true }); 
+      // Navigate based on user role
+      if (response.data?.role === 'instructor' || response.data?.role === 'admin') {
+        navigate('/instructor', { replace: true });
+      } else {
+        // Student: navigate to home page or the original destination
+        navigate(from || '/', { replace: true });
+      } 
     } else {
       toast.error(
         response.message ||
@@ -48,13 +54,13 @@ export default function LoginPage() {
     setSubmitting(false);
   };
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
-      <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background">
+      <Card className="w-100 shadow-xl border border-border bg-card text-foreground">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Welcome Back
           </CardTitle>
-          <CardDescription className="text-center text-gray-400">
+          <CardDescription className="text-center text-muted-foreground">
             Login in to continue
           </CardDescription>
         </CardHeader>
@@ -74,12 +80,12 @@ export default function LoginPage() {
                     id="credential"
                     name="credential"
                     placeholder="Enter username or Email"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                    className="bg-input border-border text-foreground placeholder-muted-foreground"
                   />
                   <ErrorMessage
                     name="credential"
                     component="p"
-                    className="text-red-400 text-sm"
+                    className="text-destructive text-sm"
                   />
                 </div>
                 {/* Password */}
@@ -87,13 +93,13 @@ export default function LoginPage() {
                 <ErrorMessage
                   name="password"
                   component="p"
-                  className="text-red-400 text-sm"
+                  className="text-destructive text-sm"
                 />
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   {isSubmitting ? "Logging In..." : "Login"}
                 </Button>
@@ -101,12 +107,12 @@ export default function LoginPage() {
             )}
           </Formik>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
+        <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <p className="text-center">
             Don’t have an account?{" "}
             <Link
               to="/auth/register"
-              className="text-indigo-400 hover:underline"
+              className="text-primary hover:underline"
             >
               Register
             </Link>

@@ -9,7 +9,7 @@ export default function InstructorSection() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {instructors.map((name, i) => (
-            <div key={i} className="bg-gray-700 p-6 rounded-xl shadow-md">
+            <div key={i} className="bg-muted p-6 rounded-xl shadow-md">
               
               <img
                 src={`https://i.pravatar.cc/150?img=${i + 10}`}
@@ -18,7 +18,7 @@ export default function InstructorSection() {
               />
 
               <h3 className="mt-4 font-semibold">{name}</h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 10+ years experience
               </p>
             </div>

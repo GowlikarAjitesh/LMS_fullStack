@@ -19,11 +19,11 @@ export default function RegisterPage() {
   // console.log("Action State:", state);
   const Navigate = useNavigate();
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
-      <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background">
+      <Card className="w-100 shadow-xl border border-border bg-card text-foreground">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Create A New Account</CardTitle>
-          <CardDescription className="text-center text-gray-400">
+          <CardDescription className="text-center text-muted-foreground">
             Register to continue
           </CardDescription>
         </CardHeader>
@@ -59,9 +59,9 @@ export default function RegisterPage() {
                     id="username"
                     name="username"
                     placeholder="Enter a Unique username"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                    className="bg-input border-border text-foreground placeholder-muted-foreground"
                   />
-                  <ErrorMessage name="username" component="p" className="text-red-400 text-sm" />
+                  <ErrorMessage name="username" component="p" className="text-destructive text-sm" />
                 </div>
 
                 {/* Email */}
@@ -73,30 +73,30 @@ export default function RegisterPage() {
                     name="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                    className="bg-input border-border text-foreground placeholder-muted-foreground"
                   />
-                  <ErrorMessage name="email" component="p" className="text-red-400 text-sm" />
+                  <ErrorMessage name="email" component="p" className="text-destructive text-sm" />
                 </div>
 
                 {/* Password */}
                 <PasswordInput id="password" name="password" label="Password" />
-                <ErrorMessage name="password" component="p" className="text-red-400 text-sm" />
+                <ErrorMessage name="password" component="p" className="text-destructive text-sm" />
 
                 {/* Confirm Password */}
                 <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm Password" />
-                <ErrorMessage name="confirmPassword" component="p" className="text-red-400 text-sm" />
+                <ErrorMessage name="confirmPassword" component="p" className="text-destructive text-sm" />
 
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   {isSubmitting ? "Registering..." : "Register"}
                 </Button>
               </Form>
             )}
           </Formik>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
+        <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <p className="text-center">
             Already have an account?{" "}
-            <Link to="/auth/login" className="text-indigo-400 hover:underline">
+            <Link to="/auth/login" className="text-primary hover:underline">
               Login
             </Link>
           </p>
@@ -152,11 +152,11 @@ export default function RegisterPage() {
 //   };
 
 //   return (
-//     <div className="flex h-screen w-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
+//     <div className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-black">
 //       <Card className="w-100 shadow-xl border border-gray-700 bg-gray-900 text-white">
 //         <CardHeader>
 //           <CardTitle className="text-2xl font-bold text-center">Create A New Account</CardTitle>
-//           <CardDescription className="text-center text-gray-400">
+//           <CardDescription className="text-center text-muted-foreground">
 //             Register to continue
 //           </CardDescription>
 //         </CardHeader>
@@ -170,9 +170,9 @@ export default function RegisterPage() {
 //                 type="text"
 //                 name="username"
 //                 placeholder="Enter a Unique username"
-//                 className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+//                 className="bg-input border-border text-foreground placeholder-muted-foreground"
 //               />
-//               {errors.username && <p className="text-red-400 text-sm">{errors.username}</p>}
+//               {errors.username && <p className="text-destructive text-sm">{errors.username}</p>}
 //             </div>
 
 //             {/* Email */}
@@ -183,28 +183,28 @@ export default function RegisterPage() {
 //                 type="email"
 //                 name="email"
 //                 placeholder="you@example.com"
-//                 className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+//                 className="bg-input border-border text-foreground placeholder-muted-foreground"
 //               />
-//               {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+//               {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
 //             </div>
 
 //             {/* Password */}
 //             <PasswordInput id="password" name="password" label="Password" />
-//             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+//             {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
 
 //             {/* Confirm Password */}
 //             <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm Password" />
-//             {errors.confirmPassword && <p className="text-red-400 text-sm">{errors.confirmPassword}</p>}
+//             {errors.confirmPassword && <p className="text-destructive text-sm">{errors.confirmPassword}</p>}
 
 //             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
 //               {isPending ? "Registering..." : "Register"}
 //             </Button>
 //           </form>
 //         </CardContent>
-//         <CardFooter className="flex flex-col space-y-2 text-sm text-gray-400">
+//         <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
 //           <p className="text-center">
 //             Already have an account?{" "}
-//             <Link to="/auth/login" className="text-indigo-400 hover:underline">
+//             <Link to="/auth/login" className="text-primary hover:underline">
 //               Login
 //             </Link>
 //           </p>

@@ -8,7 +8,7 @@ function RouteGuard({authenticated, user, element}){
         return <Navigate to='/auth/register'></Navigate>
     }
     if(authenticated && user?.role !== 'instructor' && (location.pathname.includes('/instructor') || location.pathname.includes('/auth'))){
-        return <Navigate to='/home'></Navigate>
+        return <Navigate to='/' replace></Navigate>
     }
     if(authenticated && user?.role === 'instructor' && (!location.pathname.includes('/instructor') || location.pathname.includes('/auth'))){
         return <Navigate to='/instructor'/>

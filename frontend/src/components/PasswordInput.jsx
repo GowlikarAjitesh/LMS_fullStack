@@ -23,12 +23,12 @@ export default function PasswordInput({
         type={showPassword ? "text" : "password"}
         placeholder={placeholder}
         // required={required}
-        className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 pr-10"
+        className="bg-input border-border text-foreground placeholder-muted-foreground pr-10"
       />
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-2 top-8 text-gray-400 hover:text-white"
+        className="absolute right-2 top-8 text-muted-foreground hover:text-foreground"
       >
         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>

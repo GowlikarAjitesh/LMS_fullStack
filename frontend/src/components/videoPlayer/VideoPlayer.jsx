@@ -15,7 +15,7 @@ import {
 
 export default function VideoPlayer({ url }) {
   return (
-    <div className="w-full max-w-full rounded-xl overflow-hidden shadow-lg bg-black border border-muted flex justify-center">
+    <div className="w-full max-w-full rounded-xl overflow-hidden shadow-lg bg-background border border-border flex justify-center">
       <MediaController 
         className="w-full h-full"
         // This ensures the controller stays within the bounds of the video's ratio
@@ -54,7 +54,7 @@ export default function VideoPlayer({ url }) {
           <MediaPlayButton className="bg-transparent"/>
           <MediaSeekForwardButton seekOffset={10} className="bg-transparent"/>
 
-          <MediaTimeDisplay showDuration className="text-white text-xs bg-transparent"/>
+          <MediaTimeDisplay showDuration className="text-foreground text-xs bg-transparent"/>
           <MediaTimeRange className="bg-transparent"/>
 
           <MediaMuteButton className="bg-transparent"/>

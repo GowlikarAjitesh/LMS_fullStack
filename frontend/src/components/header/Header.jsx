@@ -8,15 +8,23 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuSeparator,  
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BookOpen, LogOut, User, LayoutDashboard, Search, Bell } from "lucide-react";
+import {
+  BookOpen,
+  LogOut,
+  User,
+  LayoutDashboard,
+  Search,
+  Bell,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function Header() {
-  const { isAuth, userDetails, setIsAuth, setUserDetails } = useContext(AuthContext);
+  const { isAuth, userDetails, setIsAuth, setUserDetails } =
+    useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,39 +33,51 @@ export default function Header() {
     setUserDetails(null);
     navigate("/auth/login");
   };
-
+  const isInstructor =
+    userDetails?.role == "instructor" || userDetails?.role == "admin";
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-950/95 backdrop-blur supports-backdrop-filter:bg-gray-950/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 overflow-x-hidden">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 max-w-full">
         {/* Left Side: Logo */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="bg-indigo-600 p-1.5 rounded-lg">
-              <BookOpen className="h-6 w-6 text-white" />
+            <div className="bg-primary p-1.5 rounded-lg">
+              <BookOpen className="h-6 w-6 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold bg-linear-to-r from-white to-gray-400 bg-clip-text text-transparent hidden sm:inline-block">
+            <span className="text-xl font-bold bg-linear-to-r from-foreground to-muted-foreground bg-clip-text text-transparent hidden sm:inline-block">
               LMS Portal
             </span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
-            <Link to="/" className="hover:text-white transition-colors">Explore</Link>
-            {isAuth && (
-              <Link to="/my-courses" className="hover:text-white transition-colors">My Learning</Link>
-            )}
-          </nav>
+          {isInstructor ? (
+            <></>
+          ) : (
+            <>
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+                <Link to="/" className="hover:text-foreground transition-colors">
+                  Explore
+                </Link>
+                {isAuth && (
+                  <Link
+                    to="/my-courses"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    My Learning
+                  </Link>
+                )}
+              </nav>
+            </>
+          )}
         </div>
 
         {/* Middle: Search Bar (Hidden on mobile) */}
         <div className="hidden lg:flex flex-1 max-w-md mx-8">
           <div className="relative w-full">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search for courses..."
-              className="w-full bg-gray-900 border-gray-700 pl-9 text-white focus-visible:ring-indigo-600"
+              className="w-full bg-input border-border pl-9 text-foreground focus-visible:ring-ring"
             />
           </div>
         </div>
@@ -68,49 +88,79 @@ export default function Header() {
             <>
               {/* Instructor Switcher */}
               {userDetails?.role === "instructor" ? (
-                <Button variant="ghost" asChild className="hidden sm:flex text-gray-300 hover:text-white">
-                  <Link to="/instructor">Instructor Dashboard</Link>
-                </Button>
+                <></>
               ) : (
-                <Button variant="ghost" className="hidden sm:flex text-gray-300 hover:text-white hover:bg-indigo-600 hover:cursor-pointer border-2">
+                <Button
+                  variant="ghost"
+                  className="hidden sm:flex text-muted-foreground hover:text-primary-foreground hover:bg-primary hover:cursor-pointer border-2 border-border"
+                >
                   Teach on LMS
                 </Button>
               )}
 
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white cursor-pointer hover:bg-transparent">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground cursor-pointer hover:bg-transparent"
+              >
                 <Bell className="h-5 w-5" />
               </Button>
 
               {/* User Dropdown */}
-              <DropdownMenu >
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild className="cursor-pointer">
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10 border border-gray-700">
-                      <AvatarImage src={userDetails?.avatar} alt={userDetails?.username} />
-                      <AvatarFallback className="bg-indigo-600 text-white">
+                  <Button
+                    variant="ghost"
+                    className="relative h-10 w-10 rounded-full"
+                  >
+                    <Avatar className="h-10 w-10 border border-border">
+                      <AvatarImage
+                        src={userDetails?.avatar}
+                        alt={userDetails?.username}
+                      />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
                         {userDetails?.username?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-gray-900 border-gray-700 text-gray-300">
+                <DropdownMenuContent
+                  align="end"
+                  alignOffset={-8}
+                  sideOffset={8}
+                  className="w-56 !bg-card !text-foreground border-border !shadow-lg"
+                >
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none text-white">{userDetails?.username}</p>
-                      <p className="text-xs leading-none text-gray-500">{userDetails?.email}</p>
+                      <p className="text-sm font-medium leading-none text-foreground">
+                        {userDetails?.username}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {userDetails?.email}
+                      </p>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-800 focus:text-white">
-                    <Link to="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer focus:bg-secondary focus:text-foreground"
+                  >
+                    <Link to="/profile">
+                      <User className="mr-2 h-4 w-4" /> Profile
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer focus:bg-gray-800 focus:text-white">
-                    <Link to="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Link>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer focus:bg-secondary focus:text-foreground"
+                  >
+                    <Link to="/dashboard">
+                      <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem 
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem
                     onClick={handleLogout}
-                    className="cursor-pointer text-red-400 focus:bg-red-900/20 focus:text-red-400"
+                    className="cursor-pointer text-destructive focus:bg-destructive/20 focus:text-destructive"
                   >
                     <LogOut className="mr-2 h-4 w-4" /> Log out
                   </DropdownMenuItem>
@@ -119,10 +169,17 @@ export default function Header() {
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" asChild className="text-gray-300 hover:text-white">
+              <Button
+                variant="ghost"
+                asChild
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <Link to="/auth/login">Login</Link>
               </Button>
-              <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button
+                asChild
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
                 <Link to="/auth/register">Sign Up</Link>
               </Button>
             </div>

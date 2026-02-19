@@ -19,11 +19,11 @@ export default function InstructorLayoutPage() {
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background text-primary-foreground">
       {/* Sidebar */}
-      <aside className="w-64 shadow-md hidden md:block">
+      <aside className="w-64 shadow-md hidden md:block bg-sidebar border-r border-sidebar-border">
         <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Instructor View</h2>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">Instructor View</h2>
           <nav>
             {menuItems.map((item) => (
               <Link key={item.path} to={item.path}>

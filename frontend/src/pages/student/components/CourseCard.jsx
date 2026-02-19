@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 
 export default function CourseCard({ title, instructor, price, image }) {
   return (
-    <Card className="hover:shadow-xl transition duration-300 cursor-pointer bg-gray-500 text-white">
+    <Card className="hover:shadow-xl transition duration-300 cursor-pointer bg-card text-card-foreground">
       
       <img
         src={image}

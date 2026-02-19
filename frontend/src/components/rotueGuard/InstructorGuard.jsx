@@ -6,7 +6,7 @@ const InstructorGuard = ({ user }) => {
   //   return <Navigate to="/" replace />;
   // }
   if (user?.role !== "instructor" && user?.role !== "admin") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/instructor" replace />;
   }
   return <Outlet />;
 };
