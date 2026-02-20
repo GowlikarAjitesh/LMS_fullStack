@@ -14,8 +14,9 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 
 // Student Pages
-import StudentLayout from "@/pages/student/StudentLayout";
-import Home from "@/pages/student/StudentLayout"; // make sure this is correct
+import Home from "@/pages/student/Home";
+import ExploreCoursesPage from "./pages/student/ExploreCoursesPage";
+import MyCoursesPages from "./pages/student/MyCoursesPages";
 
 // Instructor Pages
 import InstructorLayoutPage from "@/pages/instructor/InstructorLayoutPage";
@@ -55,13 +56,16 @@ function App() {
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/register" element={<RegisterPage />} />
             <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/" element={<StudentLayout />} />
+            {/* <Route path="/" element={<Home />} /> */}
 
 
 
             {/* 🎓 Student Routes */}
-            <Route path="/" element={<StudentLayout />}>
-              {/* <Route index element={<Home />} /> */}
+            <Route path="/">
+              <Route index element={<Home />} />
+              <Route path="explore-courses" element={<ExploreCoursesPage/>}/>
+              <Route path="my-courses" element={<MyCoursesPages/>}/>
+
             </Route>
 
 

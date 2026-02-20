@@ -54,3 +54,14 @@ export async function mediaBulkUploadService(formData, onProgressCallback) {
   console.log("Media service = ", data);
   return data;
 }
+
+export async function getAllCoursesToStudentService(query=""){
+  const {data} = await axiosInstance.get(`/api/student/course/get?${query}`);
+  return data;
+}
+
+
+export async function getSingleCourseToStudentService(id){
+  const {data} = await axiosInstance.get(`/api/student/course/get/${id}`);
+  return data;
+}

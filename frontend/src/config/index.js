@@ -120,3 +120,23 @@ export const courseCuriculumInitialFormData = [
     public_id:"",
   },
 ];
+
+export const sortOptions = [
+  {id: "price-lowToHigh", label: "Price: Low to High"},
+  {id: "price-highToLow", label: "Price: High to Low"},
+  {id: "title-aToZ", label: "Title: A to Z"},
+  {id: "title-zToA", label: "Title: Z to A"},
+];
+
+export const filterOptions = {
+  category: courseCategories,
+  level: courseLevelOptions,
+  primaryLanguage: languageOptions
+};
+
+
+
+                // <SelectItem value="popular">Most Popular</SelectItem>
+                // <SelectItem value="newest">Newest</SelectItem>
+                // <SelectItem value="price-low">Price: Low to High</SelectItem>
+                // <SelectItem value="price-high">Price: High to Low</SelectItem>

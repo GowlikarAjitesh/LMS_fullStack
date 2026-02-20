@@ -54,7 +54,7 @@ export default function Header() {
             <>
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-                <Link to="/" className="hover:text-foreground transition-colors">
+                <Link to="/explore-courses" className="hover:text-foreground transition-colors">
                   Explore
                 </Link>
                 {isAuth && (
